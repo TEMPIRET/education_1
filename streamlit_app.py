@@ -150,6 +150,8 @@ submit_button=st.button("Ask")
 if submit_button:
     st.write(rag_output(query)['answer'])
 
-history_button=st.button("Chat History")
-if history_button:
-    chat_history()
+# Chat history
+
+# history_button=st.button("Chat History")
+# if history_button:
+#     chat_history()

@@ -17,6 +17,13 @@ from langchain.embeddings import HuggingFaceBgeEmbeddings
 from langchain.llms import HuggingFaceEndpoint
 
 
+# Show title and description.
+st.title("📄 FSC 111 Slide revision")
+huggingface_api_key="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"
+
+import os
+os.environ['HUGGINGFACEHUB_API_TOKEN']=huggingface_api_key
+
 ### Construct retriever ###
 loader = PyPDFLoader("/content/drive/MyDrive/Project/Training set/Biogeochemical_cycles.pdf")
 documents1 = loader.load()
@@ -77,7 +84,6 @@ question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
 
 rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 
-
 ### Statefully manage chat history ###
 class State(TypedDict):
     input: str
@@ -108,24 +114,27 @@ app = workflow.compile(checkpointer=memory)
 
 config = {"configurable": {"thread_id": "abc123"}}
 
-result = app.invoke(
-    {"input": "What is an organ?"},
+def rag_output(question):
+    result = app.invoke(
+    {"input": question},
     config=config,
+    )
+    return result
+
+def chat_history():
+    chat_history = app.get_state(config).values["chat_history"]
+    for message in chat_history:
+        message.pretty_print()
+
+# Ask the user for a question via `st.text_area`.
+query=st.text_area(
+    "Now ask a question about FSC 111",
 )
 
-result = app.invoke(
-    {"input": "Can you give me examples?"},
-    config=config,
-)
+submit_button=st.button("Ask")
+if submit_button:
+    st.write(rag_output(question)['answer']
 
-result = app.invoke(
-    {"input": "Give me with their uses"},
-    config=config,
-)
-
-result = app.invoke(
-    {"input": "Which one helps to remove waste products?"},
-    config=config,
-)
-
-print(result["answer"])
+history_button=st.button("Chat History")
+if history_button:
+    st.write(chat_history())

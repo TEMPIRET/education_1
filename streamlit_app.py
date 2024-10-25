@@ -152,4 +152,4 @@ if submit_button:
 
 history_button=st.button("Chat History")
 if history_button:
-    st.write(chat_history())
+    chat_history()

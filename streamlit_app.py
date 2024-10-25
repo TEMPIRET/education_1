@@ -25,9 +25,9 @@ import os
 os.environ['HUGGINGFACEHUB_API_TOKEN']=huggingface_api_key
 
 ### Construct retriever ###
-loader = PyPDFLoader("/content/drive/MyDrive/Project/Training set/Biogeochemical_cycles.pdf")
+loader = PyPDFLoader("Biogeochemical_cycles.pdf")
 documents1 = loader.load()
-loader = PyPDFLoader("/content/drive/MyDrive/Project/Training set/Properties_of_life-Order_and_Metabolism.pdf")
+loader = PyPDFLoader("Properties_of_life-Order_and_Metabolism.pdf")
 documents2 = loader.load()
 
 text_splitter=RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=200, add_start_index=True)

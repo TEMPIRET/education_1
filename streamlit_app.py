@@ -21,8 +21,22 @@ from langchain.llms import HuggingFaceEndpoint
 st.title("📄 FSC 111 Slide revision")
 huggingface_api_key="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"
 
-import os
-os.environ['HUGGINGFACEHUB_API_TOKEN']=huggingface_api_key
+llm = HuggingFaceEndpoint(
+    endpoint_url="meta-llama/Meta-Llama-3-8B-Instruct",
+    max_new_tokens=512,
+    top_k=10,
+    top_p=0.95,
+    typical_p=0.95,
+    temperature=0.01,
+    repetition_penalty=1.03,
+    huggingfacehub_api_token=huggingface_api_key
+)
+
+huggingface_embeddings=HuggingFaceBgeEmbeddings(
+    model_name="BAAI/bge-small-en-v1.5",      #sentence-transformers/all-MiniLM-l6-v2
+    model_kwargs={'device':'cpu'},
+    encode_kwargs={'normalize_embeddings':True}
+)
 
 ### Construct retriever ###
 loader = PyPDFLoader("Biogeochemical_cycles.pdf")

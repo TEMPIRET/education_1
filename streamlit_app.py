@@ -148,7 +148,7 @@ query=st.text_area(
 
 submit_button=st.button("Ask")
 if submit_button:
-    st.write(rag_output(question)['answer'])
+    st.write(rag_output(query)['answer'])
 
 history_button=st.button("Chat History")
 if history_button:

@@ -101,6 +101,7 @@ system_prompt = (
     "you can use information outside the context that have a good similarity to the retrieved context."
     "Always double-check information with multiple sources before giving an answer to ensure accuracy."
     "Avoid grammatical errors."
+    "Always have your answers in an organized format to ensure easy comprehension."
 
     "\n\n"
     "{context}"

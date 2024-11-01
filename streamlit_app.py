@@ -170,6 +170,6 @@ response = app.invoke(
 )
 # Display assistant response in chat message container
 with st.chat_message("assistant"):
-    print(response)
+    st.markdown(response["answer"])
 # Add assistant response to chat history
 st.session_state.messages.append({"role": "assistant", "content": response})

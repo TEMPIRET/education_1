@@ -172,4 +172,4 @@ response = app.invoke(
 with st.chat_message("assistant"):
     st.markdown(response["answer"])
 # Add assistant response to chat history
-st.session_state.messages.append({"role": "assistant", "content": response})
+st.session_state.messages.append({"role": "assistant", "content": response["answer"]})

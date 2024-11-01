@@ -97,8 +97,7 @@ system_prompt = (
     "Use the following pieces of retrieved context to answer "
     "the question. If you don't know the answer, say that you "
     "don't know. Be concise"
-    "If the context isn't good enough to provide a good explanation on the topic of the query"
-    "you can use information outside the context that have a good similarity to the retrieved context."
+    "When providing answer to a question from the user, use the retrieved context and outside pieces of information to provide a good answer to the question"
     "Always double-check information with multiple sources to ensure accuracy"
 
     "\n\n"

@@ -68,7 +68,7 @@ all_splits=splits1+splits2+splits3+splits4+splits5+splits6+splits7+splits8
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
 splits = text_splitter.split_documents(all_splits)
 vectorstore = FAISS.from_documents(
-    all_splits, huggingface_embeddings
+    splits, huggingface_embeddings
 )
 retriever = vectorstore.as_retriever()
 

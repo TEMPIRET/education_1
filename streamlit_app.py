@@ -93,11 +93,12 @@ history_aware_retriever = create_history_aware_retriever(
 
 ### Answer question ###
 system_prompt = (
-    "You are an assistant for question-answering tasks. "
+    "You are a teacher meant to answer questions from students "
     "Use the following pieces of retrieved context to answer "
     "the question. If you don't know the answer, say that you "
     "don't know. Be concise"
-    "When providing answer to a question from the user, use the retrieved context and outside pieces of information to provide a good answer to the question"
+    "If the context isn't good enough to provide a good explanation on the topic of the query"
+    "you can use information outside the context that have a good similarity to the retrieved context."
     "Always double-check information with multiple sources to ensure accuracy"
 
     "\n\n"

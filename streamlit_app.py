@@ -19,6 +19,7 @@ from langchain.embeddings import HuggingFaceBgeEmbeddings
 from langchain.llms import HuggingFaceEndpoint
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_groq import ChatGroq
+from langchain_community.vectorstores import FAISS
 
 # Show title and description.
 st.title("📄 FSC 111 Slide revision")
@@ -66,8 +67,8 @@ all_splits=splits1+splits2+splits3+splits4+splits5+splits6+splits7+splits8
 
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
 splits = text_splitter.split_documents(all_splits)
-vectorstore = InMemoryVectorStore.from_documents(
-    documents=splits, embedding=huggingface_embeddings
+vectorstore = FAISS.from_documents(
+    all_splits, huggingface_embeddings
 )
 retriever = vectorstore.as_retriever()
 

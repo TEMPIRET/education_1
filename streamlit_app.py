@@ -96,8 +96,11 @@ system_prompt = (
     "You are an assistant for question-answering tasks. "
     "Use the following pieces of retrieved context to answer "
     "the question. If you don't know the answer, say that you "
-    "don't know. Use three sentences maximum and keep the "
-    "answer concise."
+    "don't know. Be concise"
+    "If the context isn't good enough to provide a good explanation on the topic of the query"
+    "you can use information outside the context that have a good similarity to the retrieved context."
+    "Always double-check information with multiple sources to ensure accuracy"
+
     "\n\n"
     "{context}"
 )
@@ -108,9 +111,11 @@ qa_prompt = ChatPromptTemplate.from_messages(
         ("human", "{input}"),
     ]
 )
+
 question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
 
 rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
+
 
 ### Statefully manage chat history ###
 class State(TypedDict):

@@ -27,7 +27,7 @@ tavily_api_key="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"
 os.environ["GROQ_API_KEY"] = "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"
 os.environ['TAVILY_API_KEY'] = tavily_api_key
 
-llm = ChatGroq(model="llama3-8b-8192")
+llm = ChatGroq(model="llama-3.1-70b-versatile")
 
 huggingface_embeddings=HuggingFaceBgeEmbeddings(
     model_name="BAAI/bge-small-en-v1.5",      #sentence-transformers/all-MiniLM-l6-v2

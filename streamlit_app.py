@@ -1,5 +1,6 @@
 import streamlit as st
 
+import os
 from typing import Sequence
 
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
@@ -16,22 +17,17 @@ from typing_extensions import Annotated, TypedDict
 from langchain.tools.retriever import create_retriever_tool
 from langchain.embeddings import HuggingFaceBgeEmbeddings
 from langchain.llms import HuggingFaceEndpoint
-
+from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain_groq import ChatGroq
 
 # Show title and description.
 st.title("📄 FSC 111 Slide revision")
-huggingface_api_key="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"
 
-llm = HuggingFaceEndpoint(
-    endpoint_url="meta-llama/Meta-Llama-3-8B-Instruct",
-    max_new_tokens=512,
-    top_k=10,
-    top_p=0.95,
-    typical_p=0.95,
-    temperature=0.01,
-    repetition_penalty=1.03,
-    huggingfacehub_api_token=huggingface_api_key
-)
+tavily_api_key="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"
+os.environ["GROQ_API_KEY"] = "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"
+os.environ['TAVILY_API_KEY'] = tavily_api_key
+
+llm = ChatGroq(model="llama3-8b-8192")
 
 huggingface_embeddings=HuggingFaceBgeEmbeddings(
     model_name="BAAI/bge-small-en-v1.5",      #sentence-transformers/all-MiniLM-l6-v2
@@ -40,15 +36,33 @@ huggingface_embeddings=HuggingFaceBgeEmbeddings(
 )
 
 ### Construct retriever ###
-loader = PyPDFLoader("Biogeochemical_cycles.pdf")
+loader = PyPDFLoader("/content/drive/MyDrive/Project/Training set/Biogeochemical_cycles.pdf")
 documents1 = loader.load()
-loader = PyPDFLoader("Properties_of_life-Order_and_Metabolism.pdf")
+loader = PyPDFLoader("/content/drive/MyDrive/Project/Training set/Properties_of_life-Order_and_Metabolism.pdf")
 documents2 = loader.load()
+loader = PyPDFLoader("/content/drive/MyDrive/Project/Training set/Classification and Evolution of Living things 1.pdf")
+documents3 = loader.load()
+loader = PyPDFLoader("/content/drive/MyDrive/Project/Training set/Classification and Evolution of Living things 2.pdf")
+documents4 = loader.load()
+loader = PyPDFLoader("/content/drive/MyDrive/Project/Training set/FSC 111 Mitosis and Meiosis Class 9th.pptx.pdf")
+documents5 = loader.load()
+loader = PyPDFLoader("/content/drive/MyDrive/Project/Training set/FSC111 -  Unifying Themes in Biology.pdf")
+documents6 = loader.load()
+loader = PyPDFLoader("/content/drive/MyDrive/Project/Training set/FSC111 - Cell Structure and Function (1) 4th.pdf")
+documents7 = loader.load()
+loader = PyPDFLoader("/content/drive/MyDrive/Project/Training set/FSC111 - Cell Structure and Function 4th.pdf")
+documents8 = loader.load()
 
 text_splitter=RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=200, add_start_index=True)
 splits1=text_splitter.split_documents(documents1)
 splits2=text_splitter.split_documents(documents2)
-all_splits=splits1+splits2
+splits3=text_splitter.split_documents(documents3)
+splits4=text_splitter.split_documents(documents4)
+splits5=text_splitter.split_documents(documents5)
+splits6=text_splitter.split_documents(documents6)
+splits7=text_splitter.split_documents(documents7)
+splits8=text_splitter.split_documents(documents8)
+all_splits=splits1+splits2+splits3+splits4+splits5+splits6+splits7+splits8
 
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
 splits = text_splitter.split_documents(all_splits)
@@ -56,7 +70,6 @@ vectorstore = InMemoryVectorStore.from_documents(
     documents=splits, embedding=huggingface_embeddings
 )
 retriever = vectorstore.as_retriever()
-
 
 ### Contextualize question ###
 contextualize_q_system_prompt = (
@@ -129,29 +142,34 @@ app = workflow.compile(checkpointer=memory)
 
 config = {"configurable": {"thread_id": "abc123"}}
 
-def rag_output(question):
-    result = app.invoke(
-    {"input": question},
+
+### Chat Interface ###
+
+st.title("FSC111 Slide revision")
+
+# Initialize chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Display chat messages from history on app rerun
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# React to user input
+if prompt := st.chat_input("What is up?"):
+    # Display user message in chat message container
+    with st.chat_message("user"):
+        st.markdown(prompt)
+    # Add user message to chat history
+    st.session_state.messages.append({"role": "user", "content": prompt})
+
+response = app.invoke(
+    {"input": prompt},
     config=config,
-    )
-    return result
-
-def chat_history():
-    chat_history = app.get_state(config).values["chat_history"]
-    for message in chat_history:
-        message.pretty_print()
-
-# Ask the user for a question via `st.text_area`.
-query=st.text_area(
-    "Now ask a question about FSC 111",
 )
-
-submit_button=st.button("Ask")
-if submit_button:
-    st.write(rag_output(query)['answer'])
-
-# Chat history
-
-# history_button=st.button("Chat History")
-# if history_button:
-#     chat_history()
+# Display assistant response in chat message container
+with st.chat_message("assistant"):
+    st.markdown(response)
+# Add assistant response to chat history
+st.session_state.messages.append({"role": "assistant", "content": response})

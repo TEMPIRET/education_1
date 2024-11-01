@@ -1,9 +1,10 @@
 langchain_community
 langchain_text_splitters
-huggingface_hub
 sentence_transformers
 faiss-cpu
 pypdf
 langgraph
 langchain-huggingface
+tavily-python
+langchain_groq
 streamlit
